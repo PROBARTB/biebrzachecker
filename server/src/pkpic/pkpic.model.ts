@@ -7,7 +7,7 @@ export type PkpicCodeStationId = number & { readonly __brand: "PkpicCodeStationI
 export const formatPkpicGrmDate = (d: Date): string => {
   const pad = (n: number) => n.toString().padStart(2, "0");
 
-  return ( d.getFullYear().toString() + pad(d.getMonth() + 1) + pad(d.getDate()) + pad(d.getHours()) + pad(d.getMinutes()) );
+  return ( d.getFullYear().toString() + pad(d.getMonth() + 1) + pad(d.getDate()) + pad(d.getUTCHours()) + pad(d.getMinutes()) );
 };
 
 export const formatPkpicLastUpdateDate = (date: Date): string => {

@@ -16,6 +16,7 @@ const fetchStationsFromIc = async () => {
 const stations: Record<number, IcStation> = await fetchStationsFromIc();
 
 const findStationsMatchingNameOrId = (query: string): IcStation[] => {
+  if(!query) return [];
   const q = query.toLowerCase();
 
   return Object.values(stations).filter(

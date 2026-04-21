@@ -5,7 +5,7 @@ export interface GetTrainRoutePayload {
     departureStationId: PkpicEVAStationId,
     arrivalStationId: PkpicEVAStationId,
     trainNumber: number,
-    url: string | null,
+    url?: string,
 }
 
 export interface ResponseTrainStop {
@@ -80,7 +80,7 @@ export interface TrainRouteResponse {
 
 export const parseDate = (value: string): Date | null => {
     if (!value || value.trim() === "") return null;
-    const d = new Date(value);
+    const d = new Date(value.replace("CEST", "+02:00"));
     return isNaN(d.getTime()) ? null : d;
 };
 

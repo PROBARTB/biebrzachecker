@@ -11,11 +11,11 @@ const routeRouter = Router();
 routeRouter.get("/", routeController.getRoute);
 
 const compositionRouter = Router();
-routeRouter.get("/", compositionController.getComposition);
-routeRouter.get("/:id/carriage", compositionController.getCarriageForComposition);
+compositionRouter.get("/", compositionController.getComposition);
+compositionRouter.get("/:compositionHashKey/carriage", compositionController.getCarriageSvgForComposition);
 
 const carriageRouter = Router();
-routeRouter.get("/", carriageController.getCarriage);
+carriageRouter.get("/svg", carriageController.getCarriageSvg);
 
 const indexRouter = Router();
 indexRouter.use("/stations", icstationsRouter);

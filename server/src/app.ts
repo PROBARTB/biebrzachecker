@@ -7,7 +7,7 @@ const app = express();
 
 app.use(express.json());
 
-import biebrzecheckerCarriageRoutes from "./routes.js";
+import biebrzecheckerCarriageRoutes from "./routes.js"
 app.use("/biebrzachecker/carriages/", biebrzecheckerCarriageRoutes);
 
 const PORT = process.env.PORT;
