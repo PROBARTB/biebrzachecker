@@ -1,141 +1,169 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-import { TrainRouteView } from './components/TrainRouteView'
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
-import { RouteSearchForm } from './components/RouteSearchForm'
-import type { TrainRoute } from './hooks/route.model'
-import type { RouteQueryParams } from './hooks/route.hooks'
-import { TrainCompositionView } from './components/TrainCompositionView'
-import { MainTabs } from './components/MainTabs'
+import { useState } from "react";
+import {
+  Box,
+  Container,
+  CssBaseline,
+  Paper,
+  ThemeProvider,
+  Typography,
+  createTheme,
+} from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import { RouteSearchForm } from "./components/RouteSearchForm";
+import { MainTabs } from "./components/MainTabs";
+import type { RouteQueryParams } from "./hooks/route.hooks";
 
 const theme = createTheme({
   palette: {
-    mode: 'light', // or 'dark' for Material 3 dark theme
+    mode: "light",
+    primary: {
+      main: "#355C7D",
+      light: "#6E89A0",
+      dark: "#23425C",
+      contrastText: "#FFFFFF",
+    },
+    secondary: {
+      main: "#61758A",
+    },
+    background: {
+      default: "#F5F7FA",
+      paper: "#FCFDFE",
+    },
+    text: {
+      primary: "#1B2733",
+      secondary: "#5F6E7C",
+    },
+    divider: "#D9E0E7",
+  },
+  shape: {
+    borderRadius: 18,
+  },
+  typography: {
+    fontFamily: `"Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif`,
+    h3: {
+      fontSize: "2.25rem",
+      fontWeight: 700,
+      letterSpacing: "-0.02em",
+    },
+    h4: {
+      fontSize: "1.75rem",
+      fontWeight: 700,
+      letterSpacing: "-0.02em",
+    },
+    h5: {
+      fontSize: "1.25rem",
+      fontWeight: 700,
+    },
+    subtitle1: {
+      fontWeight: 600,
+    },
+    button: {
+      fontWeight: 700,
+      textTransform: "none",
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 18,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 18,
+          boxShadow: "none",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 14,
+          paddingInline: 18,
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 14,
+          backgroundColor: "#FFFFFF",
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: 10,
+        },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        indicator: {
+          height: 3,
+          borderRadius: 999,
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          minHeight: 48,
+          fontWeight: 700,
+        },
+      },
+    },
   },
 });
 
 function App() {
-  const [count, setCount] = useState(0)
-
   const [routeParams, setRouteParams] = useState<RouteQueryParams | null>(null);
-
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-          <RouteSearchForm onSubmit={(params)=>setRouteParams(params)}/>
-          <TrainRouteView payload={routeParams}/>
-          {routeParams ? <MainTabs routeParams={routeParams}/> : <p>Nie ma</p>}
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          py: { xs: 3, md: 5 },
+          background: `linear-gradient(180deg, ${alpha("#355C7D", 0.08)} 0%, #F5F7FA 240px)`,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Box sx={{ display: "grid", gap: 3 }}>
+            <Box sx={{ px: { xs: 0.5, sm: 1 } }}>
+              <Typography variant="h3">Biebrza Checker</Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+                Trasa, sklad i wagony w jednym miejscu.
+              </Typography>
+            </Box>
 
-      <div className="ticks"></div>
+            <RouteSearchForm onSubmit={setRouteParams} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+            {routeParams ? (
+              <MainTabs routeParams={routeParams} />
+            ) : (
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 4,
+                  textAlign: "center",
+                  color: "text.secondary",
+                  backgroundColor: alpha("#FFFFFF", 0.72),
+                }}
+              >
+                <Typography variant="subtitle1">Wyszukaj pociag, aby zobaczyc szczegoly.</Typography>
+              </Paper>
+            )}
+          </Box>
+        </Container>
+      </Box>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

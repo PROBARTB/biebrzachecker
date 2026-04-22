@@ -3,46 +3,75 @@ import { useStationsCompletions } from "../hooks/station.hooks";
 import type { RouteQueryParams } from "../hooks/route.hooks";
 import type { IcStation } from "../hooks/station.model";
 import {
-  Box,
-  TextField,
-  Button,
-  Paper,
-  Typography,
   Autocomplete,
+  Button,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import { Search, Train } from "@mui/icons-material";
+import {
+  ConfirmationNumberRounded,
+  FlagRounded,
+  PlaceRounded,
+  SearchRounded,
+  SwapHorizRounded,
+  TodayRounded,
+} from "@mui/icons-material";
 
 interface Props {
   onSubmit: (params: RouteQueryParams) => void;
 }
 
-export const RouteSearchForm = ({ onSubmit }: Props) => {
-  const [trainCategory] = useState("IC");
-  const [trainNumber, setTrainNumber] = useState<string>("");
+function stationLabel(station: IcStation) {
+  return `${station.n} (EVA ${station.h}, EPA ${station.i})`;
+}
 
+function helperText(station: IcStation | null) {
+  return station ? `EVA ${station.h} | EPA ${station.i}` : " ";
+}
+
+export function RouteSearchForm({ onSubmit }: Props) {
+  const [trainCategory, setTrainCategory] = useState("IC");
+  const [trainNumber, setTrainNumber] = useState("");
   const [fromQuery, setFromQuery] = useState("");
   const [toQuery, setToQuery] = useState("");
-
   const [fromStation, setFromStation] = useState<IcStation | null>(null);
   const [toStation, setToStation] = useState<IcStation | null>(null);
-
   const [departureDate, setDepartureDate] = useState<Dayjs | null>(dayjs());
 
-  const { data: fromSuggestions } = useStationsCompletions(fromQuery);
-  const { data: toSuggestions } = useStationsCompletions(toQuery);
+  const fromSuggestionsQuery = useStationsCompletions(fromQuery);
+  const toSuggestionsQuery = useStationsCompletions(toQuery);
+
+  const fromSuggestions = fromSuggestionsQuery.data ?? [];
+  const toSuggestions = toSuggestionsQuery.data ?? [];
+
+  const swapStations = () => {
+    setFromStation(toStation);
+    setToStation(fromStation);
+    setFromQuery(toQuery);
+    setToQuery(fromQuery);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const parsedTrainNumber = Number(trainNumber);
     if (!fromStation || !toStation || !trainNumber || !departureDate) return;
+    if (!trainCategory.trim()) return;
+    if (!Number.isFinite(parsedTrainNumber) || parsedTrainNumber <= 0) return;
 
     onSubmit({
-      trainCategory,
-      trainNumber: Number(trainNumber),
+      trainCategory: trainCategory.trim(),
+      trainNumber: parsedTrainNumber,
       fromEVAStationId: Number(fromStation.h),
       toEVAStationId: Number(toStation.h),
       departureDate: departureDate.toDate(),
@@ -52,139 +81,173 @@ export const RouteSearchForm = ({ onSubmit }: Props) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Paper
-        elevation={3}
+        component="form"
+        variant="outlined"
+        onSubmit={handleSubmit}
         sx={{
-          p: 4,
-          mb: 4,
-          maxWidth: 1000,
-          mx: "auto",
-          borderRadius: 4,
-          background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+          p: { xs: 2, sm: 2.5 },
+          display: "grid",
+          gap: 2,
+          backgroundColor: alpha("#FFFFFF", 0.82),
         }}
       >
-        <Typography
-          variant="h4"
-          gutterBottom
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: '#1976d2',
-            fontWeight: 'bold',
-            mb: 3
-          }}
-        >
-          <Train sx={{ mr: 2, fontSize: '2.5rem' }} />
-          Dokąd chcesz się wybrać?
-        </Typography>
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            gap: 2,
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          <Autocomplete
-            options={fromSuggestions || []}
-            getOptionLabel={(option) => `${option.n} (${option.h} / ${option.i})`}
-            value={fromStation}
-            onChange={(_, newValue) => setFromStation(newValue)}
-            inputValue={fromQuery}
-            onInputChange={(_, newInputValue) => setFromQuery(newInputValue)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Jadę z"
-                required
-                sx={{
-                  minWidth: 200,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 3,
-                  }
-                }}
-              />
-            )}
-            filterOptions={(x) => x}
-            sx={{ flex: 1 }}
-          />
-          <Autocomplete
-            options={toSuggestions || []}
-            getOptionLabel={(option) => `${option.n} (${option.h} / ${option.i})`}
-            value={toStation}
-            onChange={(_, newValue) => setToStation(newValue)}
-            inputValue={toQuery}
-            onInputChange={(_, newInputValue) => setToQuery(newInputValue)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Jadę do"
-                required
-                sx={{
-                  minWidth: 200,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 3,
-                  }
-                }}
-              />
-            )}
-            filterOptions={(x) => x}
-            sx={{ flex: 1 }}
-          />
-          <TextField
-            label="Pociąg"
-            type="text"
-            value={trainNumber}
-            onChange={(e) => setTrainNumber(e.target.value)}
-            sx={{
-              minWidth: 150,
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-              }
-            }}
-            required
-          />
-          <DateTimePicker
-            label="Data wyjazdu"
-            value={departureDate}
-            onChange={setDepartureDate}
-            ampm={false}
-            format="DD/MM/YYYY HH:mm"
-            slotProps={{
-              textField: {
-                sx: {
-                  minWidth: 200,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 3,
-                  }
-                }
-              }
-            }}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            size="large"
-            sx={{
-              minWidth: 200,
-              height: 56,
-              borderRadius: 3,
-              background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
-              boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-              '&:hover': {
-                background: 'linear-gradient(45deg, #1565c0 30%, #1976d2 90%)',
-              }
-            }}
-          >
-            <Search sx={{ mr: 1 }} />
-            Sprawdź trasy
-          </Button>
-        </Box>
+        <Stack direction="row" justifyContent="space-between" alignItems="baseline" spacing={2}>
+          <Typography variant="h5">Szukaj pociagu</Typography>
+          <Typography variant="body2" color="text.secondary">
+            EVA i EPA sa widoczne w podpowiedziach.
+          </Typography>
+        </Stack>
+
+        <Grid container spacing={1.5} alignItems="center">
+          <Grid item xs={12} md={5}>
+            <Autocomplete
+              options={fromSuggestions}
+              loading={fromSuggestionsQuery.isFetching}
+              getOptionLabel={stationLabel}
+              isOptionEqualToValue={(option, value) => option.h === value.h}
+              value={fromStation}
+              onChange={(_, newValue) => setFromStation(newValue)}
+              inputValue={fromQuery}
+              onInputChange={(_, newInputValue) => setFromQuery(newInputValue)}
+              noOptionsText={fromQuery.length > 2 ? "Brak wynikow" : "Wpisz min. 3 znaki"}
+              filterOptions={(x) => x}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Skad"
+                  placeholder="Warszawa Centralna"
+                  required
+                  helperText={helperText(fromStation)}
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PlaceRounded color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={1} sx={{ display: "flex", justifyContent: "center" }}>
+            <IconButton
+              onClick={swapStations}
+              aria-label="Zamien stacje"
+              sx={{
+                mt: { md: -0.5 },
+                width: 44,
+                height: 44,
+                border: "1px solid",
+                borderColor: "divider",
+                backgroundColor: "#FFFFFF",
+              }}
+            >
+              <SwapHorizRounded />
+            </IconButton>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Autocomplete
+              options={toSuggestions}
+              loading={toSuggestionsQuery.isFetching}
+              getOptionLabel={stationLabel}
+              isOptionEqualToValue={(option, value) => option.h === value.h}
+              value={toStation}
+              onChange={(_, newValue) => setToStation(newValue)}
+              inputValue={toQuery}
+              onInputChange={(_, newInputValue) => setToQuery(newInputValue)}
+              noOptionsText={toQuery.length > 2 ? "Brak wynikow" : "Wpisz min. 3 znaki"}
+              filterOptions={(x) => x}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Dokad"
+                  placeholder="Krakow Glowny"
+                  required
+                  helperText={helperText(toStation)}
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <FlagRounded color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <DateTimePicker
+              label="Wyjazd"
+              value={departureDate}
+              onChange={setDepartureDate}
+              ampm={false}
+              format="DD/MM/YYYY HH:mm"
+              slotProps={{
+                textField: {
+                  required: true,
+                  helperText: " ",
+                  InputProps: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <TodayRounded color="primary" />
+                      </InputAdornment>
+                    ),
+                  },
+                  sx: { width: "100%" },
+                },
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={4} md={2}>
+            <TextField
+              label="Kategoria"
+              value={trainCategory}
+              onChange={(e) => setTrainCategory(e.target.value.toUpperCase())}
+              required
+              helperText=" "
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={8} md={3}>
+            <TextField
+              label="Numer"
+              value={trainNumber}
+              onChange={(e) => setTrainNumber(e.target.value)}
+              required
+              helperText=" "
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <ConfirmationNumberRounded color="primary" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={3} sx={{ display: "flex" }}>
+            <Button
+              type="submit"
+              variant="contained"
+              startIcon={<SearchRounded />}
+              sx={{
+                width: "100%",
+                minHeight: 56,
+                boxShadow: "none",
+              }}
+            >
+              Wyszukaj
+            </Button>
+          </Grid>
+        </Grid>
       </Paper>
     </LocalizationProvider>
   );
-};
+}

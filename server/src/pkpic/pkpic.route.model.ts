@@ -1,4 +1,5 @@
 import icstationsService from "../icstations.service.js";
+import { NotFoundError } from "../utils/errors.js";
 import { PkpicEPAStationId, PkpicEVAStationId } from "./pkpic.model.js";
 
 export interface GetTrainRoutePayload {
@@ -88,7 +89,14 @@ export const parseDate = (value: string): Date | null => {
 };
 
 const getEPAIdforEVAId = (stationEVAId: PkpicEVAStationId): PkpicEPAStationId => {
-    return icstationsService.getEPAIdforEVAId(stationEVAId);
+    try {
+        return icstationsService.getEPAIdforEVAId(stationEVAId)
+    }catch(err) {
+        if(!(err instanceof NotFoundError)) throw err;
+
+        console.error(err);
+        return 0 as PkpicEPAStationId;
+    };
 }
 
 export const mapTrainRouteResponse = (res: TrainRouteResponse): TrainRoute => {

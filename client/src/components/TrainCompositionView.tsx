@@ -1,146 +1,193 @@
-// import React from "react";
-// import {
-//   Card,
-//   CardContent,
-//   Typography,
-//   Chip,
-//   Stack,
-//   Divider,
-//   Box,
-//   Grid,
-//   Tooltip,
-// } from "@mui/material";
-// import type { TrainComposition } from "../hooks/composition.model";
+import DirectionsRailwayRoundedIcon from "@mui/icons-material/DirectionsRailwayRounded";
+import SwapHorizRoundedIcon from "@mui/icons-material/SwapHorizRounded";
+import TrainRoundedIcon from "@mui/icons-material/TrainRounded";
+import {
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Grid,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import type {
+  TrainComposition,
+  TrainCompositionCarriage,
+} from "../hooks/composition.model";
 
-// interface Props {
-//   composition: TrainComposition;
-// }
+type Props = {
+  composition: TrainComposition;
+};
 
-// export const TrainCompositionView: React.FC<Props> = ({ composition }) => {
-//   const {
-//     trainName,
-//     rollingStockClass,
-//     drivingDirection,
-//     changesDrivingDirection,
-//     defaultCarriageForClass,
-//     carriages,
-//     unavailableCarriages,
-//   } = composition;
+function getClassLabel(value: TrainCompositionCarriage["class"]) {
+  switch (value) {
+    case 1:
+      return "1 klasa";
+    case 2:
+      return "2 klasa";
+    default:
+      return "Bez klasy";
+  }
+}
 
-//   const classLabel = (cls: 0 | 1 | 2) => {
-//     switch (cls) {
-//       case 1:
-//         return "1 klasa";
-//       case 2:
-//         return "2 klasa";
-//       default:
-//         return "Brak klasy";
-//     }
-//   };
+function getClassColor(
+  value: TrainCompositionCarriage["class"]
+): "default" | "primary" | "warning" {
+  switch (value) {
+    case 1:
+      return "warning";
+    case 2:
+      return "primary";
+    default:
+      return "default";
+  }
+}
 
-//   const isUnavailable = (num: number) =>
-//     unavailableCarriages.includes(num);
+export function TrainCompositionView({ composition }: Props) {
+  const unavailableCarriages = new Set(composition.unavailableCarriages);
 
-//   return (
-//     <Card variant="outlined" sx={{ borderRadius: 3 }}>
-//       <CardContent>
-//         <Typography variant="h5" gutterBottom>
-//           {trainName}
-//         </Typography>
+  const defaultClassChips = Object.entries(composition.defaultCarriageForClass).map(
+    ([classKey, carriageNumber]) => ({
+      key: classKey,
+      label: `Klasa ${classKey}: wagon ${carriageNumber}`,
+    })
+  );
 
-//         <Typography variant="body1" color="text.secondary">
-//           Tabor: {rollingStockClass}
-//         </Typography>
+  return (
+    <Card variant="outlined">
+      <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
+        <Stack spacing={2.5}>
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 2,
+              backgroundColor: alpha("#FFFFFF", 0.72),
+            }}
+          >
+            <Stack spacing={1.5}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <TrainRoundedIcon color="primary" />
+                <Typography variant="h5">Sklad</Typography>
+              </Stack>
 
-//         <Stack direction="row" spacing={1} mt={1} mb={2}>
-//           <Chip
-//             label={`Kierunek jazdy: ${drivingDirection}`}
-//             color="primary"
-//             variant="outlined"
-//           />
-//           {changesDrivingDirection && (
-//             <Chip
-//               label="Zmiana kierunku jazdy"
-//               color="secondary"
-//               variant="outlined"
-//             />
-//           )}
-//         </Stack>
+              <Stack
+                direction={{ xs: "column", md: "row" }}
+                justifyContent="space-between"
+                spacing={2}
+              >
+                <Box>
+                  <Typography variant="h6">
+                    {composition.trainName || "Brak nazwy"}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {composition.rollingStockClass || "Brak typu taboru"}
+                  </Typography>
+                </Box>
 
-//         <Divider sx={{ my: 2 }} />
+                <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+                  <Chip label={`${composition.carriages.length} wagonow`} />
+                  {composition.unavailableCarriages.length > 0 ? (
+                    <Chip
+                      color="warning"
+                      variant="outlined"
+                      label={`${composition.unavailableCarriages.length} niedostepnych`}
+                    />
+                  ) : null}
+                  <Chip
+                    icon={<DirectionsRailwayRoundedIcon />}
+                    variant="outlined"
+                    label={`Kierunek ${composition.drivingDirection}`}
+                  />
+                  {composition.changesDrivingDirection ? (
+                    <Chip
+                      icon={<SwapHorizRoundedIcon />}
+                      variant="outlined"
+                      label="Zmiana kierunku"
+                    />
+                  ) : null}
+                </Stack>
+              </Stack>
 
-//         <Typography variant="subtitle1" gutterBottom>
-//           Domyślne wagony dla klas
-//         </Typography>
+              {defaultClassChips.length > 0 ? (
+                <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+                  {defaultClassChips.map((item) => (
+                    <Chip key={item.key} size="small" variant="outlined" label={item.label} />
+                  ))}
+                </Stack>
+              ) : null}
+            </Stack>
+          </Paper>
 
-//         <Stack direction="row" spacing={1} mb={2}>
-//           {Object.entries(defaultCarriageForClass).map(([cls, num]) => (
-//             <Chip
-//               key={cls}
-//               label={`${cls} klasa → wagon ${num}`}
-//               color="primary"
-//               variant="outlined"
-//             />
-//           ))}
-//         </Stack>
+          <Grid container spacing={1.5}>
+            {composition.carriages.map((carriage) => {
+              const isUnavailable = unavailableCarriages.has(carriage.number);
 
-//         <Divider sx={{ my: 2 }} />
+              return (
+                <Grid item xs={12} sm={6} lg={4} key={carriage.number}>
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      p: 1.75,
+                      height: "100%",
+                      backgroundColor: isUnavailable
+                        ? alpha("#FFF3E0", 0.72)
+                        : alpha("#FFFFFF", 0.72),
+                    }}
+                  >
+                    <Stack spacing={1.25}>
+                      <Stack direction="row" justifyContent="space-between" spacing={1}>
+                        <Box>
+                          <Typography variant="subtitle1">Wagon {carriage.number}</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {carriage.type || "Brak typu"}
+                          </Typography>
+                        </Box>
 
-//         <Typography variant="subtitle1" gutterBottom>
-//           Skład pociągu
-//         </Typography>
+                        <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap">
+                          <Chip
+                            size="small"
+                            color={getClassColor(carriage.class)}
+                            label={getClassLabel(carriage.class)}
+                          />
+                          {isUnavailable ? (
+                            <Chip size="small" color="warning" label="Niedostepny" />
+                          ) : null}
+                        </Stack>
+                      </Stack>
 
-//         <Grid container spacing={2}>
-//           {carriages.map((car) => (
-//             <Grid item xs={12} sm={6} md={4} key={car.number}>
-//               <Tooltip
-//                 title={
-//                   isUnavailable(car.number)
-//                     ? "Wagon wyłączony z eksploatacji"
-//                     : ""
-//                 }
-//               >
-//                 <Box
-//                   sx={{
-//                     p: 2,
-//                     borderRadius: 2,
-//                     border: "1px solid",
-//                     borderColor: isUnavailable(car.number)
-//                       ? "error.main"
-//                       : "divider",
-//                     backgroundColor: isUnavailable(car.number)
-//                       ? "error.light"
-//                       : "background.paper",
-//                     opacity: isUnavailable(car.number) ? 0.6 : 1,
-//                   }}
-//                 >
-//                   <Typography variant="subtitle2">
-//                     Wagon {car.number}
-//                   </Typography>
+                      <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap">
+                        <Chip size="small" variant="outlined" label={`Nr ${carriage.number}`} />
+                        {carriage.amenities.length > 0 ? (
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={`${carriage.amenities.length} udogodnien`}
+                          />
+                        ) : null}
+                      </Stack>
 
-//                   <Typography variant="body1" color="text.secondary">
-//                     {classLabel(car.class)} • {car.type}
-//                   </Typography>
-
-//                   <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
-//                     {car.amenities.map((a) => (
-//                       <Chip
-//                         key={a}
-//                         label={`Udogodnienie ${a}`}
-//                         size="small"
-//                         variant="outlined"
-//                       />
-//                     ))}
-//                   </Stack>
-//                 </Box>
-//               </Tooltip>
-//             </Grid>
-//           ))}
-//         </Grid>
-//       </CardContent>
-//     </Card>
-//   );
-// };
-export function TrainCompositionView({ composition }: any) {
-  return <div>COMPOSITION VIEW (TODO)</div>;
+                      {carriage.amenities.length > 0 ? (
+                        <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap">
+                          {carriage.amenities.map((amenity) => (
+                            <Chip
+                              key={`${carriage.number}-${amenity}`}
+                              size="small"
+                              variant="outlined"
+                              label={`Kod ${amenity}`}
+                            />
+                          ))}
+                        </Stack>
+                      ) : null}
+                    </Stack>
+                  </Paper>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Stack>
+      </CardContent>
+    </Card>
+  );
 }

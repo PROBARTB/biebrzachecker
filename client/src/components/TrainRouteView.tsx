@@ -1,184 +1,329 @@
-// import { useTrainRoute, type RouteQueryParams } from "../hooks/route.hooks";
-// import type { TrainStop } from "../hooks/route.model";
-// import {
-//   Box,
-//   Card,
-//   CardContent,
-//   Typography,
-//   Chip,
-//   Divider,
-//   CircularProgress,
-//   Alert,
-// } from "@mui/material";
-// import { Train, Info, DirectionsRailway, CheckCircle, Block } from "@mui/icons-material";
+import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import RouteRoundedIcon from "@mui/icons-material/RouteRounded";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
+import {
+  Alert,
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Divider,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import type { TrainRoute, TrainStop } from "../hooks/route.model";
 
-// export const TrainRouteView = ({ payload }: { payload: RouteQueryParams }) => {
-// //   const params = {
-// //     trainCategory: "IC",
-// //     trainNumber: 1516,
-// //     fromEVAStationId: 5100065,
-// //     toEVAStationId: 5100010,
-// //     departureDate: new Date("2026-04-22T17:01:00"),
-// //   };
+type Props = {
+  route: TrainRoute;
+};
 
-//   const { data, isLoading, isError, error } = useTrainRoute(payload);
+type MaybeDate = Date | string | null | undefined;
 
-//   if (isLoading) {
-//     return (
-//       <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-//         <CircularProgress />
-//         <Typography variant="body1" sx={{ ml: 2 }}>Fetching route...</Typography>
-//       </Box>
-//     );
-//   }
+const dateTimeFormatter = new Intl.DateTimeFormat("pl-PL", {
+  day: "2-digit",
+  month: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+});
 
-//   if (isError) {
-//     return (
-//       <Alert severity="error">
-//         Error: {(error as Error).message}
-//       </Alert>
-//     );
-//   }
+const timeFormatter = new Intl.DateTimeFormat("pl-PL", {
+  hour: "2-digit",
+  minute: "2-digit",
+});
 
-//   if (!data) return null;
+function toDate(value: MaybeDate): Date | null {
+  if (!value) return null;
+  const parsed = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
 
-//   const formatTime = (date: Date | null) => {
-//     if (!date) return "N/A";
-//     return new Intl.DateTimeFormat("pl-PL", {
-//       hour: "2-digit",
-//       minute: "2-digit",
-//     }).format(new Date(date));
-//   };
+function formatDateTime(value: MaybeDate) {
+  const date = toDate(value);
+  return date ? dateTimeFormatter.format(date) : "brak";
+}
 
-//   const calculateTravelTime = (current: TrainStop, next: TrainStop | undefined) => {
-//     if (!next || !current.departure || !next.arrival) return null;
-//     const diff = new Date(next.arrival).getTime() - new Date(current.departure).getTime();
-//     const minutes = Math.floor(diff / 60000);
-//     return `${minutes} min`;
-//   };
+function formatTime(value: MaybeDate) {
+  const date = toDate(value);
+  return date ? timeFormatter.format(date) : "brak";
+}
 
-//   return (
-//     <Box sx={{ maxWidth: 800, mx: "auto", p: 2 }}>
-//       <Card elevation={5} sx={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', borderRadius: 3 }}>
-//         <CardContent sx={{ p: 3 }}>
-//           <Typography variant="h4" component="h1" gutterBottom sx={{ display: "flex", alignItems: "center", color: 'primary.dark', fontWeight: 'bold' }}>
-//             <Train sx={{ mr: 1, fontSize: '2rem' }} />
-//             Szczegóły trasy pociągu {payload.trainCategory} {payload.trainNumber}
-//           </Typography>
+function formatDurationMinutes(value: number | null) {
+  if (value === null) return "brak";
+  if (value < 60) return `${value} min`;
+  const hours = Math.floor(value / 60);
+  const minutes = value % 60;
+  return minutes === 0 ? `${hours} h` : `${hours} h ${minutes} min`;
+}
 
-//           <Box sx={{ position: "relative" }}>
-//             {data.stops.map((stop, index) => {
-//               const nextStop = data.stops[index + 1];
-//               const travelTime = calculateTravelTime(stop, nextStop);
-//               return (
-//                 <Box key={stop.stationId} sx={{ display: "flex", alignItems: "center", mb: 3, p: 1, borderRadius: 2, bgcolor: 'background.paper', boxShadow: 1 }}>
-//                   <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mr: 2 }}>
-//                     {index === 0 ? (
-//                       <DirectionsRailway sx={{ fontSize: 24, color: 'success.main' }} />
-//                     ) : index === data.stops.length - 1 ? (
-//                       <DirectionsRailway sx={{ fontSize: 24, color: 'error.main' }} />
-//                     ) : (
-//                       <Box
-//                         sx={{
-//                           width: 12,
-//                           height: 12,
-//                           borderRadius: "50%",
-//                           bgcolor: "primary.main",
-//                           border: "2px solid white",
-//                           boxShadow: 1,
-//                         }}
-//                       />
-//                     )}
-//                     {index < data.stops.length - 1 && (
-//                       <Box
-//                         sx={{
-//                           width: 2,
-//                           height: 80,
-//                           bgcolor: "grey.400",
-//                           mt: 1,
-//                           borderRadius: 1,
-//                         }}
-//                       />
-//                     )}
-//                   </Box>
-//                   <Box sx={{ flex: 1 }}>
-//                     <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-//                       {stop.stationName} ({stop.stationId} / {stop.stationNumber})
-//                     </Typography>
-//                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-//                       ID stacji: {stop.stationId} | Typ stacji: {stop.stationType} | Rodzaj kodu: {stop.rodzajKodStacji}
-//                     </Typography>
-//                     <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
-//                       <Typography variant="body2" color="text.secondary">
-//                         Przyjazd: {formatTime(stop.arrival)}
-//                       </Typography>
-//                       <Typography variant="body2" color="text.secondary">
-//                         Odjazd: {formatTime(stop.departure)}
-//                       </Typography>
-//                     </Box>
-//                     <Box sx={{ display: "flex", gap: 2, mt: 0.5 }}>
-//                       <Typography variant="body2" color="text.secondary">
-//                         Peron: {stop.platform}
-//                       </Typography>
-//                       <Typography variant="body2" color="text.secondary">
-//                         Tor: {stop.track}
-//                       </Typography>
-//                     </Box>
-//                     {stop.realArrival && (
-//                       <Typography variant="body2" color="primary">
-//                         Rzeczywisty przyjazd: {formatTime(stop.realArrival)}
-//                       </Typography>
-//                     )}
-//                     {stop.realDeparture && (
-//                       <Typography variant="body2" color="primary">
-//                         Rzeczywisty odjazd: {formatTime(stop.realDeparture)}
-//                       </Typography>
-//                     )}
-//                     <Box sx={{ mt: 1 }}>
-//                       {stop.boardingAllowed && <Chip label="Można wsiadać" size="small" color="success" sx={{ mr: 1 }} />}
-//                       {stop.disembarkingAllowed && <Chip label="Można wysiadać" size="small" color="info" />}
-//                     </Box>
-//                     {stop.messages.length > 0 && (
-//                       <Box sx={{ mt: 1 }}>
-//                         {stop.messages.map((msg, i) => (
-//                           <Alert key={i} severity="warning" sx={{ mt: 0.5, py: 0.5 }}>
-//                             {msg.text}
-//                           </Alert>
-//                         ))}
-//                       </Box>
-//                     )}
-//                     {travelTime && (
-//                       <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontStyle: "italic" }}>
-//                         Czas podróży do następnej stacji: {travelTime}
-//                       </Typography>
-//                     )}
-//                   </Box>
-//                 </Box>
-//               );
-//             })}
-//           </Box>
+function getDurationMinutes(start: MaybeDate, end: MaybeDate) {
+  const startDate = toDate(start);
+  const endDate = toDate(end);
+  if (!startDate || !endDate) return null;
+  return Math.round((endDate.getTime() - startDate.getTime()) / 60000);
+}
 
-//           <Divider sx={{ my: 2 }} />
+function getDelayMinutes(planned: MaybeDate, actual: MaybeDate) {
+  const plannedDate = toDate(planned);
+  const actualDate = toDate(actual);
+  if (!plannedDate || !actualDate) return null;
+  return Math.round((actualDate.getTime() - plannedDate.getTime()) / 60000);
+}
 
-//           <Typography variant="h6" gutterBottom sx={{ display: "flex", alignItems: "center" }}>
-//             <Info sx={{ mr: 1 }} />
-//             Informacje o pociągu
-//           </Typography>
-//           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-//             {data.info.map((info) => (
-//               <Chip
-//                 key={info.code}
-//                 label={`${info.code}: ${info.description}`}
-//                 variant="outlined"
-//                 sx={{ mb: 1 }}
-//               />
-//             ))}
-//           </Box>
-//         </CardContent>
-//       </Card>
-//     </Box>
-//   );
-// };
-export function TrainRouteView({ route }: any) {
-  return <div>ROUTE VIEW (TODO)</div>;
+function delayChipLabel(planned: MaybeDate, actual: MaybeDate) {
+  const delay = getDelayMinutes(planned, actual);
+  if (delay === null) return null;
+  if (delay === 0) return "Punktualnie";
+  if (delay > 0) return `+${delay} min`;
+  return `-${Math.abs(delay)} min`;
+}
+
+function RouteStopRow({
+  stop,
+  isLast,
+  nextStop,
+}: {
+  stop: TrainStop;
+  isLast: boolean;
+  nextStop?: TrainStop;
+}) {
+  const arrivalDelayLabel = delayChipLabel(stop.arrival, stop.realArrival);
+  const departureDelayLabel = delayChipLabel(stop.departure, stop.realDeparture);
+  const rideToNext = nextStop
+    ? getDurationMinutes(stop.departure ?? stop.realDeparture, nextStop.arrival ?? nextStop.realArrival)
+    : null;
+
+  const codeChips = [
+    `EVA ${stop.stationId}`,
+    `EPA ${stop.stationEPAId}`,
+    stop.stationCode ? `Kod ${stop.stationCode}` : null,
+    stop.stationNumber ? `Nr ${stop.stationNumber}` : null,
+    stop.platform ? `Peron ${stop.platform}` : null,
+    stop.track ? `Tor ${stop.track}` : null,
+  ].filter(Boolean) as string[];
+
+  return (
+    <Box sx={{ display: "flex", gap: 1.5, alignItems: "stretch" }}>
+      <Box sx={{ width: 18, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <CircleRoundedIcon sx={{ fontSize: 14, color: "primary.main", mt: 1.1 }} />
+        {!isLast ? (
+          <Box sx={{ width: 2, flex: 1, minHeight: 46, bgcolor: "divider", mt: 0.5 }} />
+        ) : null}
+      </Box>
+
+      <Paper
+        variant="outlined"
+        sx={{
+          flex: 1,
+          p: 1.75,
+          backgroundColor: alpha("#FFFFFF", 0.78),
+        }}
+      >
+        <Stack spacing={1.25}>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            justifyContent="space-between"
+            spacing={1.5}
+          >
+            <Box>
+              <Typography variant="subtitle1">{stop.stationName}</Typography>
+              <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mt: 0.75 }}>
+                {codeChips.map((item) => (
+                  <Chip key={`${stop.stationId}-${item}`} size="small" label={item} variant="outlined" />
+                ))}
+              </Stack>
+            </Box>
+
+            <Stack direction="row" spacing={2.5} sx={{ minWidth: { md: 260 } }}>
+              <Box>
+                <Typography variant="caption" color="text.secondary">
+                  Przyjazd
+                </Typography>
+                <Typography variant="subtitle1">{formatTime(stop.arrival)}</Typography>
+                {stop.realArrival ? (
+                  <Typography variant="body2" color="text.secondary">
+                    Rzecz. {formatTime(stop.realArrival)}
+                  </Typography>
+                ) : null}
+                {arrivalDelayLabel ? (
+                  <Chip
+                    size="small"
+                    color={getDelayMinutes(stop.arrival, stop.realArrival)! > 0 ? "warning" : "success"}
+                    label={arrivalDelayLabel}
+                    sx={{ mt: 0.75 }}
+                  />
+                ) : null}
+              </Box>
+
+              <Box>
+                <Typography variant="caption" color="text.secondary">
+                  Odjazd
+                </Typography>
+                <Typography variant="subtitle1">{formatTime(stop.departure)}</Typography>
+                {stop.realDeparture ? (
+                  <Typography variant="body2" color="text.secondary">
+                    Rzecz. {formatTime(stop.realDeparture)}
+                  </Typography>
+                ) : null}
+                {departureDelayLabel ? (
+                  <Chip
+                    size="small"
+                    color={getDelayMinutes(stop.departure, stop.realDeparture)! > 0 ? "warning" : "success"}
+                    label={departureDelayLabel}
+                    sx={{ mt: 0.75 }}
+                  />
+                ) : null}
+              </Box>
+            </Stack>
+          </Stack>
+
+          <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+            <Chip
+              size="small"
+              label={`Wsiadanie ${stop.boardingAllowed ? "tak" : "nie"}`}
+              color={stop.boardingAllowed ? "primary" : "default"}
+              variant={stop.boardingAllowed ? "filled" : "outlined"}
+            />
+            <Chip
+              size="small"
+              label={`Wysiadanie ${stop.disembarkingAllowed ? "tak" : "nie"}`}
+              color={stop.disembarkingAllowed ? "primary" : "default"}
+              variant={stop.disembarkingAllowed ? "filled" : "outlined"}
+            />
+            {rideToNext !== null && nextStop ? (
+              <Chip
+                size="small"
+                variant="outlined"
+                label={`Do ${nextStop.stationName}: ${formatDurationMinutes(rideToNext)}`}
+              />
+            ) : null}
+          </Stack>
+
+          {stop.messages.length > 0 ? (
+            <Stack spacing={0.75}>
+              {stop.messages.map((message, index) => (
+                <Alert
+                  key={`${stop.stationId}-${index}`}
+                  severity="warning"
+                  variant="outlined"
+                  icon={<WarningAmberRoundedIcon />}
+                  sx={{ py: 0 }}
+                >
+                  {message.text}
+                </Alert>
+              ))}
+            </Stack>
+          ) : null}
+        </Stack>
+      </Paper>
+    </Box>
+  );
+}
+
+export function TrainRouteView({ route }: Props) {
+  if (route.stops.length === 0) {
+    return <Alert severity="info">Brak punktow trasy do wyswietlenia.</Alert>;
+  }
+
+  const firstStop = route.stops[0];
+  const lastStop = route.stops[route.stops.length - 1];
+
+  const plannedDuration = getDurationMinutes(
+    firstStop.departure ?? firstStop.arrival,
+    lastStop.arrival ?? lastStop.departure
+  );
+  const actualDuration =
+    firstStop.realDeparture && lastStop.realArrival
+      ? getDurationMinutes(firstStop.realDeparture, lastStop.realArrival)
+      : null;
+
+  return (
+    <Card variant="outlined">
+      <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
+        <Stack spacing={2.5}>
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 2,
+              backgroundColor: alpha("#FFFFFF", 0.72),
+            }}
+          >
+            <Stack spacing={1.5}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <RouteRoundedIcon color="primary" />
+                <Typography variant="h5">Trasa</Typography>
+              </Stack>
+
+              <Stack
+                direction={{ xs: "column", md: "row" }}
+                justifyContent="space-between"
+                spacing={2}
+              >
+                <Box>
+                  <Typography variant="h6">
+                    {firstStop.stationName} - {lastStop.stationName}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {formatDateTime(firstStop.departure ?? firstStop.arrival)} -{" "}
+                    {formatDateTime(lastStop.arrival ?? lastStop.departure)}
+                  </Typography>
+                </Box>
+
+                <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                  <Chip label={`${route.stops.length} punktow`} />
+                  <Chip label={`Plan ${formatDurationMinutes(plannedDuration)}`} variant="outlined" />
+                  {actualDuration !== null ? (
+                    <Chip label={`Rzecz. ${formatDurationMinutes(actualDuration)}`} variant="outlined" />
+                  ) : null}
+                </Stack>
+              </Stack>
+            </Stack>
+          </Paper>
+
+          <Stack spacing={1.5}>
+            {route.stops.map((stop, index) => (
+              <RouteStopRow
+                key={`${stop.stationId}-${index}`}
+                stop={stop}
+                nextStop={route.stops[index + 1]}
+                isLast={index === route.stops.length - 1}
+              />
+            ))}
+          </Stack>
+
+          {route.info.length > 0 ? (
+            <>
+              <Divider />
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 1.5,
+                  backgroundColor: alpha("#FFFFFF", 0.68),
+                }}
+              >
+                <Stack spacing={1}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <InfoOutlinedIcon color="primary" fontSize="small" />
+                    <Typography variant="subtitle1">Informacje o trasie</Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+                    {route.info.map((info, index) => (
+                      <Chip
+                        key={`${info.code}-${info.stationTo}-${index}`}
+                        size="small"
+                        variant="outlined"
+                        label={`${info.code}: ${info.description} (${info.stationTo})`}
+                      />
+                    ))}
+                  </Stack>
+                </Stack>
+              </Paper>
+            </>
+          ) : null}
+        </Stack>
+      </CardContent>
+    </Card>
+  );
 }

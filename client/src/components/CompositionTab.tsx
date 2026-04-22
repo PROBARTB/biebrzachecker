@@ -101,7 +101,7 @@ export function CompositionTab({ routeParams }: Props) {
       )}
 
       {compositionQuery.data && (
-        <TrainCompositionView composition={compositionQuery.data} />
+        <TrainCompositionView composition={compositionQuery.data.composition} />
       )}
     </Box>
   );
