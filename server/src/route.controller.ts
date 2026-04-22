@@ -4,7 +4,7 @@ import { fetchErrorHandler } from "./utils/errors.js";
 
 const getRoute = async (req: any, res: any) => {
     try {
-        const { cat, nr, from, to, date: stringDate } = req.query;
+        const { cat, nr, from, to, date: stringDate, forceFetch } = req.query;
 
         if (!cat) return res.status(400).json({message: "`&cat=`: is required"});
         if (!nr) return res.status(400).json({message: "`&nr=`: is required"});
@@ -35,7 +35,7 @@ const getRoute = async (req: any, res: any) => {
             departureStationId,
             arrivalStationId,
             departureDate,
-        });
+        }, forceFetch);
 
         return res.json({ route });
     } catch (err) {

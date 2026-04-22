@@ -1,4 +1,5 @@
-import { PkpicEVAStationId } from "./pkpic.model.js";
+import icstationsService from "../icstations.service.js";
+import { PkpicEPAStationId, PkpicEVAStationId } from "./pkpic.model.js";
 
 export interface GetTrainRoutePayload {
     departureDate: Date,
@@ -44,6 +45,7 @@ export interface TrainRoute {
 
 export interface TrainStop {
     stationId: PkpicEVAStationId;
+    stationEPAId: PkpicEPAStationId;
     stationName: string;
     stationCode: string; // ??? usually same as id
     stationNumber: string; // ??? usually same as id
@@ -85,10 +87,15 @@ export const parseDate = (value: string): Date | null => {
     return isNaN(d.getTime()) ? null : d;
 };
 
+const getEPAIdforEVAId = (stationEVAId: PkpicEVAStationId): PkpicEPAStationId => {
+    return icstationsService.getEPAIdforEVAId(stationEVAId);
+}
+
 export const mapTrainRouteResponse = (res: TrainRouteResponse): TrainRoute => {
     return {
         stops: res.trasePrzejezdu.trasaPrzejazdu.map(stop => ({
             stationId: stop.stacja as PkpicEVAStationId,
+            stationEPAId: getEPAIdforEVAId(stop.stacja as PkpicEVAStationId) as PkpicEPAStationId,
             stationName: stop.nazwaStacji,
             stationCode: stop.kodStacji,
             stationNumber: stop.numerStacji,

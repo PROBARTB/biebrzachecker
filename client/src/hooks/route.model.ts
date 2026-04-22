@@ -1,4 +1,4 @@
-import type { PkpicEVAStationId } from "./model";
+import type { PkpicEPAStationId, PkpicEVAStationId } from "./model";
 
 export interface TrainRoute {
     stops: TrainStop[];
@@ -7,6 +7,7 @@ export interface TrainRoute {
 
 export interface TrainStop {
     stationId: PkpicEVAStationId;
+    stationEPAId: PkpicEPAStationId;
     stationName: string;
     stationCode: string; // ??? usually same as id
     stationNumber: string; // ??? usually same as id

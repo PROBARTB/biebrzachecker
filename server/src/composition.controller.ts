@@ -5,7 +5,7 @@ import { fetchErrorHandler } from "./utils/errors.js";
 
 const getComposition = async (req: any, res: any) => {
     try {
-        const { cat, nr, from, to, fromDate, toDate } = req.query;
+        const { cat, nr, from, to, fromDate, toDate, forceFetch } = req.query;
 
         if (!cat) return res.status(400).json({message: "`&cat=`: is required"});
         if (!nr) return res.status(400).json({message: "`&nr=`: is required"});
@@ -39,7 +39,7 @@ const getComposition = async (req: any, res: any) => {
             arrivalStationId,
             departureDate,
             arrivalDate
-        });
+        }, forceFetch);
 
         return res.json({ composition, hashKey });
     } catch (err) {
@@ -49,7 +49,7 @@ const getComposition = async (req: any, res: any) => {
 
 const getCarriageSvgForComposition = async (req: any, res: any) => {
     try {
-        const { nr } = req.query;
+        const { nr, forceFetch } = req.query;
         const { compositionHashKey } = req.params;
 
         if (!compositionHashKey) return res.status(400).json({message: "`:compositionHashKey`: is required"});
@@ -58,7 +58,7 @@ const getCarriageSvgForComposition = async (req: any, res: any) => {
         const carriageSvg = await compositionService.getCarriageSvgForComposition({
             hashKey: compositionHashKey,
             carriageNumber: nr,
-        });
+        }, forceFetch);
 
         return res.json({ carriageSvg });
     } catch (err) {

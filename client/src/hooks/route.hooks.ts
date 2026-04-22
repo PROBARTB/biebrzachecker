@@ -10,8 +10,8 @@ export interface RouteQueryParams {
   departureDate: Date;
 }
 
-const formatLocalISO = (date: Date) => date.toISOString().slice(0, 19); // "2026-04-22T17:01:00"
-
+// "2026-04-22T17:01:00"
+const formatLocalISO = (date: Date) => date.toLocaleString("sv-SE").replace(" ", "T");
 
 export const getTrainRoute = async (params: RouteQueryParams): Promise<TrainRoute> => {
   const { data } = await api.get("/route", { params: {
@@ -25,11 +25,14 @@ console.log("NIGEZZZ", data);
   return data.route;
 };
 
-export const useTrainRoute = (params: RouteQueryParams | null) => {
+export const useTrainRoute = (
+  params: RouteQueryParams,
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: ["trainRoute", params],
-    queryFn: () => getTrainRoute(params as RouteQueryParams),
-    enabled: !!params,
+    queryFn: () => getTrainRoute(params),
+    enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 5,
   });
 };

@@ -12,7 +12,7 @@ export const getStationsCompletions  = async (query: string): Promise<IcStation[
   return data;
 };
 
-export const useStationsCompletions  = (query: string | null) => {
+export const useStationsCompletions  = (query: string) => {
   return useQuery<IcStation[]>({
     queryKey: ["icStations", query],
     queryFn: () => getStationsCompletions(query),

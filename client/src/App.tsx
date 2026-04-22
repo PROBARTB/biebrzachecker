@@ -9,6 +9,7 @@ import { RouteSearchForm } from './components/RouteSearchForm'
 import type { TrainRoute } from './hooks/route.model'
 import type { RouteQueryParams } from './hooks/route.hooks'
 import { TrainCompositionView } from './components/TrainCompositionView'
+import { MainTabs } from './components/MainTabs'
 
 const theme = createTheme({
   palette: {
@@ -33,6 +34,7 @@ function App() {
         </div>
           <RouteSearchForm onSubmit={(params)=>setRouteParams(params)}/>
           <TrainRouteView payload={routeParams}/>
+          {routeParams ? <MainTabs routeParams={routeParams}/> : <p>Nie ma</p>}
         <div>
           <h1>Get started</h1>
           <p>
