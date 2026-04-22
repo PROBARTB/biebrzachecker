@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CircularProgress, Box, Typography } from "@mui/material";
 import { useTrainRoute } from "../hooks/route.hooks";
 import { useTrainComposition } from "../hooks/composition.hooks";
@@ -22,6 +22,14 @@ export function CarriagesTab({ routeParams }: Props) {
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [carriageNumber, setCarriageNumber] = useState<number | undefined>();
+  const initializedRouteSearchKey = useRef<string | null>(null);
+  const routeSearchKey = [
+    routeParams.trainCategory,
+    routeParams.trainNumber,
+    routeParams.fromEVAStationId,
+    routeParams.toEVAStationId,
+    routeParams.departureDate.toISOString(),
+  ].join(":");
 
   const routeQuery = useTrainRoute(routeParams);
 
@@ -63,15 +71,19 @@ const carriageSvgQuery = useCompositionCarriageSvg(
 
   useEffect(() => {
     if (!routeQuery.data) return;
+    if (initializedRouteSearchKey.current === routeSearchKey) return;
 
     const stops: TrainStop[] = routeQuery.data.stops;
+    const firstStop = stops[0];
+    const lastStop = stops[stops.length - 1];
 
-    if (!from) setFrom(stops[0].stationEPAId);
-    if (!to) setTo(stops[stops.length - 1].stationEPAId);
-
-    if (!dateFrom) setDateFrom(new Date(stops[0].departure!));
-    if (!dateTo) setDateTo(new Date(stops[stops.length - 1].arrival!));
-  }, [routeQuery.data]);
+    setFrom(firstStop.stationEPAId);
+    setTo(lastStop.stationEPAId);
+    setDateFrom(new Date(firstStop.departure!));
+    setDateTo(new Date(lastStop.arrival!));
+    setCarriageNumber(undefined);
+    initializedRouteSearchKey.current = routeSearchKey;
+  }, [routeQuery.data, routeSearchKey]);
 
   if (routeQuery.isLoading)
     return (

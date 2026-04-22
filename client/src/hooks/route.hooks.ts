@@ -13,6 +13,15 @@ export interface RouteQueryParams {
 // "2026-04-22T17:01:00"
 const formatLocalISO = (date: Date) => date.toLocaleString("sv-SE").replace(" ", "T");
 
+const getTrainRouteQueryKey = (params: RouteQueryParams) => [
+  "trainRoute",
+  params.trainCategory,
+  params.trainNumber,
+  params.fromEVAStationId,
+  params.toEVAStationId,
+  formatLocalISO(params.departureDate),
+] as const;
+
 export const getTrainRoute = async (params: RouteQueryParams): Promise<TrainRoute> => {
   const { data } = await api.get("/route", { params: {
     cat: params.trainCategory,
@@ -30,7 +39,7 @@ export const useTrainRoute = (
   options?: { enabled?: boolean }
 ) => {
   return useQuery({
-    queryKey: ["trainRoute", params],
+    queryKey: getTrainRouteQueryKey(params),
     queryFn: () => getTrainRoute(params),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 5,

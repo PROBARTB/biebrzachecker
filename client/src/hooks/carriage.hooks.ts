@@ -6,6 +6,10 @@ export interface CompositionCarriageSvgQueryParams {
     carriageNumber: number;
 }
 
+const getCompositionCarriageSvgQueryKey = (
+  params: CompositionCarriageSvgQueryParams
+) => ["compositionCarriageSvg", params.compositionHashKey, params.carriageNumber] as const;
+
 export const getCompositionCarriageSvg = async (
   params: CompositionCarriageSvgQueryParams,
   forceFetch?: boolean
@@ -23,7 +27,7 @@ export const useCompositionCarriageSvg = (
   options?: { enabled?: boolean }
 ) => {
   return useQuery({
-    queryKey: ["compositionCarriageSvg", params],
+    queryKey: getCompositionCarriageSvgQueryKey(params),
     queryFn: () => getCompositionCarriageSvg(params),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 5,

@@ -122,6 +122,15 @@ const theme = createTheme({
 
 function App() {
   const [routeParams, setRouteParams] = useState<RouteQueryParams | null>(null);
+  const routeSearchKey = routeParams
+    ? [
+        routeParams.trainCategory,
+        routeParams.trainNumber,
+        routeParams.fromEVAStationId,
+        routeParams.toEVAStationId,
+        routeParams.departureDate.toISOString(),
+      ].join(":")
+    : null;
 
   return (
     <ThemeProvider theme={theme}>
@@ -145,7 +154,7 @@ function App() {
             <RouteSearchForm onSubmit={setRouteParams} />
 
             {routeParams ? (
-              <MainTabs routeParams={routeParams} />
+              <MainTabs key={routeSearchKey ?? undefined} routeParams={routeParams} />
             ) : (
               <Paper
                 variant="outlined"

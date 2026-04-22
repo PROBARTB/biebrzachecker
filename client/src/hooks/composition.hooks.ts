@@ -12,7 +12,17 @@ export interface TrainCompositionQueryParams {
     arrivalStationEPAId: PkpicEPAStationId;
 }
 
-const formatLocalISO = (date: Date) => date.toLocaleString("sv-SE").replace(" ", "T"); // "2026-04-22T17:01:00"
+const formatLocalISO = (date: Date) => date?.toLocaleString("sv-SE").replace(" ", "T"); // "2026-04-22T17:01:00"
+
+const getTrainCompositionQueryKey = (params: TrainCompositionQueryParams) => [
+  "trainComposition",
+  params.trainCategory,
+  params.trainNumber,
+  params.departureStationEPAId,
+  params.arrivalStationEPAId,
+  formatLocalISO(params.departureDate),
+  formatLocalISO(params.arrivalDate),
+] as const;
 
 
 export const getTrainComposition = async (params: TrainCompositionQueryParams): Promise<{composition: TrainComposition, hashKey: string}> => {
@@ -33,7 +43,7 @@ export const useTrainComposition = (
   options?: { enabled?: boolean }
 ) => {
   return useQuery({
-    queryKey: ["trainComposition", params],
+    queryKey: getTrainCompositionQueryKey(params),
     queryFn: () => getTrainComposition(params),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 5,

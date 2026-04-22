@@ -19,7 +19,12 @@ const getComposition = async (payload: {
     const hashKey = createHashKey("composition", payload);
 
     const cached = compositionsCache.get(hashKey);
-    if(cached && !forceFetch) return {composition: (cached as {composition: TrainComposition, payload: any}).composition as TrainComposition};
+    if(cached && !forceFetch) {
+        return {
+            composition: (cached as {composition: TrainComposition, payload: any}).composition as TrainComposition,
+            hashKey,
+        };
+    }
 
     const composition: TrainComposition = await pkpicDynamicService.getComposition(payload);
     compositionsCache.set(hashKey, {composition, payload});
