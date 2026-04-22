@@ -48,6 +48,7 @@ export interface TrainStop {
     stationCode: string; // ??? usually same as id
     stationNumber: string; // ??? usually same as id
     stationType: string;
+    rodzajKodStacji: string;
     platform: string;
     track: string;
     arrival: Date | null;
@@ -92,6 +93,7 @@ export const mapTrainRouteResponse = (res: TrainRouteResponse): TrainRoute => {
             stationCode: stop.kodStacji,
             stationNumber: stop.numerStacji,
             stationType: stop.typStacji,
+            rodzajKodStacji: stop.rodzajKodStacji,
             platform: stop.peron,
             track: stop.tor,
             arrival: parseDate(stop.dataPrzyjazdu),
