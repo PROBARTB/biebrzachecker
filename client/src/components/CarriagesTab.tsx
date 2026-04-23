@@ -22,6 +22,8 @@ export function CarriagesTab({ routeParams }: Props) {
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [carriageNumber, setCarriageNumber] = useState<number | undefined>();
+  const [compositionRefreshToken, setCompositionRefreshToken] = useState(0);
+  const [carriageRefreshToken, setCarriageRefreshToken] = useState(0);
   const initializedRouteSearchKey = useRef<string | null>(null);
   const routeSearchKey = [
     routeParams.trainCategory,
@@ -50,6 +52,7 @@ const compositionQuery = useTrainComposition(
   },
   {
     enabled: readyForComposition,
+    refreshToken: compositionRefreshToken,
   }
 );
 
@@ -65,6 +68,7 @@ const carriageSvgQuery = useCompositionCarriageSvg(
   },
   {
     enabled: readyForCarriage,
+    refreshToken: carriageRefreshToken,
   }
 );
 
@@ -82,6 +86,8 @@ const carriageSvgQuery = useCompositionCarriageSvg(
     setDateFrom(new Date(firstStop.departure!));
     setDateTo(new Date(lastStop.arrival!));
     setCarriageNumber(undefined);
+    setCompositionRefreshToken(0);
+    setCarriageRefreshToken(0);
     initializedRouteSearchKey.current = routeSearchKey;
   }, [routeQuery.data, routeSearchKey]);
 
@@ -152,7 +158,11 @@ const carriageSvgQuery = useCompositionCarriageSvg(
       )}
 
       {carriageSvgQuery.data && (
-        <CarriageView svg={carriageSvgQuery.data} />
+        <CarriageView
+          svg={carriageSvgQuery.data}
+          onRefresh={() => setCarriageRefreshToken((current) => current + 1)}
+          isRefreshing={carriageSvgQuery.isFetching}
+        />
       )}
     </Box>
   );

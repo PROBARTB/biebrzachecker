@@ -1,8 +1,10 @@
 import DirectionsRailwayRoundedIcon from "@mui/icons-material/DirectionsRailwayRounded";
+import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import SwapHorizRoundedIcon from "@mui/icons-material/SwapHorizRounded";
 import TrainRoundedIcon from "@mui/icons-material/TrainRounded";
 import {
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -19,6 +21,8 @@ import type {
 
 type Props = {
   composition: TrainComposition;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 };
 
 function getClassLabel(value: TrainCompositionCarriage["class"]) {
@@ -45,7 +49,11 @@ function getClassColor(
   }
 }
 
-export function TrainCompositionView({ composition }: Props) {
+export function TrainCompositionView({
+  composition,
+  onRefresh,
+  isRefreshing = false,
+}: Props) {
   const unavailableCarriages = new Set(composition.unavailableCarriages);
 
   const defaultClassChips = Object.entries(composition.defaultCarriageForClass).map(
@@ -67,9 +75,28 @@ export function TrainCompositionView({ composition }: Props) {
             }}
           >
             <Stack spacing={1.5}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <TrainRoundedIcon color="primary" />
-                <Typography variant="h5">Sklad</Typography>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                alignItems={{ xs: "stretch", sm: "center" }}
+                justifyContent="space-between"
+              >
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <TrainRoundedIcon color="primary" />
+                  <Typography variant="h5">Sklad</Typography>
+                </Stack>
+
+                {onRefresh ? (
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<RefreshRoundedIcon />}
+                    onClick={onRefresh}
+                    disabled={isRefreshing}
+                  >
+                    Odswiez sklad
+                  </Button>
+                ) : null}
               </Stack>
 
               <Stack

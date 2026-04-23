@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CircularProgress, Box, Typography } from "@mui/material";
 import { useTrainRoute } from "../hooks/route.hooks";
 import { type RouteQueryParams } from "../hooks/route.hooks";
@@ -9,7 +10,10 @@ type Props = {
 };
 
 export function RouteTab({ routeParams }: Props) {
-  const { data, isLoading, isError, error } = useTrainRoute(routeParams);
+  const [refreshToken, setRefreshToken] = useState(0);
+  const { data, isLoading, isError, isFetching, error } = useTrainRoute(routeParams, {
+    refreshToken,
+  });
 
   if (isLoading)
     return (
@@ -22,5 +26,11 @@ export function RouteTab({ routeParams }: Props) {
   if (isError)
     return <ErrorView message="Failed to load route" details={String(error)} />;
 
-  return <TrainRouteView route={data!} />;
+  return (
+    <TrainRouteView
+      route={data!}
+      onRefresh={() => setRefreshToken((current) => current + 1)}
+      isRefreshing={isFetching}
+    />
+  );
 }

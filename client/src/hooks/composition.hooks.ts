@@ -25,7 +25,10 @@ const getTrainCompositionQueryKey = (params: TrainCompositionQueryParams) => [
 ] as const;
 
 
-export const getTrainComposition = async (params: TrainCompositionQueryParams): Promise<{composition: TrainComposition, hashKey: string}> => {
+export const getTrainComposition = async (
+  params: TrainCompositionQueryParams,
+  forceFetch?: boolean
+): Promise<{composition: TrainComposition, hashKey: string}> => {
   const { data } = await api.get("/composition", { params: {
     cat: params.trainCategory,
     nr: params.trainNumber,
@@ -33,6 +36,7 @@ export const getTrainComposition = async (params: TrainCompositionQueryParams): 
     to: params.arrivalStationEPAId,
     fromDate: formatLocalISO(params.departureDate),
     toDate: formatLocalISO(params.arrivalDate),
+    forceFetch,
 }});
 console.log("COMPOSITION", data);
   return {composition: data.composition, hashKey: data.hashKey};
@@ -40,11 +44,13 @@ console.log("COMPOSITION", data);
 
 export const useTrainComposition = (
   params: TrainCompositionQueryParams,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean; refreshToken?: number }
 ) => {
+  const refreshToken = options?.refreshToken ?? 0;
+
   return useQuery({
-    queryKey: getTrainCompositionQueryKey(params),
-    queryFn: () => getTrainComposition(params),
+    queryKey: [...getTrainCompositionQueryKey(params), refreshToken] as const,
+    queryFn: () => getTrainComposition(params, refreshToken > 0),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 5,
   });

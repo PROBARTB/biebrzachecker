@@ -24,11 +24,13 @@ export const getCompositionCarriageSvg = async (
 
 export const useCompositionCarriageSvg = (
   params: CompositionCarriageSvgQueryParams,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean; refreshToken?: number }
 ) => {
+  const refreshToken = options?.refreshToken ?? 0;
+
   return useQuery({
-    queryKey: getCompositionCarriageSvgQueryKey(params),
-    queryFn: () => getCompositionCarriageSvg(params),
+    queryKey: [...getCompositionCarriageSvgQueryKey(params), refreshToken] as const,
+    queryFn: () => getCompositionCarriageSvg(params, refreshToken > 0),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 5,
   });

@@ -1,10 +1,12 @@
 import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import RouteRoundedIcon from "@mui/icons-material/RouteRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -18,6 +20,8 @@ import type { TrainRoute, TrainStop } from "../hooks/route.model";
 
 type Props = {
   route: TrainRoute;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 };
 
 type MaybeDate = Date | string | null | undefined;
@@ -222,7 +226,11 @@ function RouteStopRow({
   );
 }
 
-export function TrainRouteView({ route }: Props) {
+export function TrainRouteView({
+  route,
+  onRefresh,
+  isRefreshing = false,
+}: Props) {
   if (route.stops.length === 0) {
     return <Alert severity="info">Brak punktow trasy do wyswietlenia.</Alert>;
   }
@@ -251,9 +259,28 @@ export function TrainRouteView({ route }: Props) {
             }}
           >
             <Stack spacing={1.5}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <RouteRoundedIcon color="primary" />
-                <Typography variant="h5">Trasa</Typography>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                alignItems={{ xs: "stretch", sm: "center" }}
+                justifyContent="space-between"
+              >
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <RouteRoundedIcon color="primary" />
+                  <Typography variant="h5">Trasa</Typography>
+                </Stack>
+
+                {onRefresh ? (
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<RefreshRoundedIcon />}
+                    onClick={onRefresh}
+                    disabled={isRefreshing}
+                  >
+                    Odswiez trase
+                  </Button>
+                ) : null}
               </Stack>
 
               <Stack

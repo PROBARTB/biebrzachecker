@@ -18,6 +18,7 @@ export function CompositionTab({ routeParams }: Props) {
   const [to, setTo] = useState<PkpicEPAStationId | undefined>();
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
+  const [refreshToken, setRefreshToken] = useState(0);
   const initializedRouteSearchKey = useRef<string | null>(null);
   const routeSearchKey = [
     routeParams.trainCategory,
@@ -46,6 +47,7 @@ export function CompositionTab({ routeParams }: Props) {
     },
     {
       enabled: ready,
+      refreshToken,
     }
   );
 
@@ -111,7 +113,11 @@ export function CompositionTab({ routeParams }: Props) {
       )}
 
       {compositionQuery.data && (
-        <TrainCompositionView composition={compositionQuery.data.composition} />
+        <TrainCompositionView
+          composition={compositionQuery.data.composition}
+          onRefresh={() => setRefreshToken((current) => current + 1)}
+          isRefreshing={compositionQuery.isFetching}
+        />
       )}
     </Box>
   );

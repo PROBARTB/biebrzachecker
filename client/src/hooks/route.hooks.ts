@@ -22,13 +22,17 @@ const getTrainRouteQueryKey = (params: RouteQueryParams) => [
   formatLocalISO(params.departureDate),
 ] as const;
 
-export const getTrainRoute = async (params: RouteQueryParams): Promise<TrainRoute> => {
+export const getTrainRoute = async (
+  params: RouteQueryParams,
+  forceFetch?: boolean
+): Promise<TrainRoute> => {
   const { data } = await api.get("/route", { params: {
     cat: params.trainCategory,
     nr: params.trainNumber,
     from: params.fromEVAStationId,
     to: params.toEVAStationId,
     date: formatLocalISO(params.departureDate),
+    forceFetch,
 }});
 console.log("NIGEZZZ", data);
   return data.route;
@@ -36,11 +40,13 @@ console.log("NIGEZZZ", data);
 
 export const useTrainRoute = (
   params: RouteQueryParams,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean; refreshToken?: number }
 ) => {
+  const refreshToken = options?.refreshToken ?? 0;
+
   return useQuery({
-    queryKey: getTrainRouteQueryKey(params),
-    queryFn: () => getTrainRoute(params),
+    queryKey: [...getTrainRouteQueryKey(params), refreshToken] as const,
+    queryFn: () => getTrainRoute(params, refreshToken > 0),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 5,
   });
