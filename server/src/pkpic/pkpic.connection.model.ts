@@ -1,18 +1,18 @@
-import { PkpicCodeStationId } from "./pkpic.model.js";
+import { PkpicCodeStationId, PkpicEVAStationId } from "./pkpic.model.js";
 
 export interface SearchConnectionsPayload {
   url: string | null;
   departureDate: Date;        // then parse to -> YYYY-MM-DD HH:mm:ss
   arrivalDate: Date;          // then parse to -> YYYY-MM-DD HH:mm:ss
 
-  departureStationId: PkpicCodeStationId;
-  arrivalStationId: PkpicCodeStationId;
+  departureStationId: PkpicEVAStationId;
+  arrivalStationId: PkpicEVAStationId;
 
   minTransferTime: number;
   maxTransferTime: number;
   maxTransfers: number;
 
-  viaStationIds: PkpicCodeStationId[];
+  viaStationIds: PkpicEVAStationId[];
 
   directOnly: boolean;
   fastestOnly: boolean;

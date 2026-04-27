@@ -1,7 +1,16 @@
 import fetch from "node-fetch";
-import type { IcStation } from "./icstations.model.js";
-import { PkpicEPAStationId, PkpicEVAStationId } from "./pkpic/pkpic.model.js";
-import { NotFoundError } from "./utils/errors.js";
+import { PkpicEPAStationId, PkpicEVAStationId } from "../pkpic/pkpic.model.js";
+import { NotFoundError } from "../utils/errors.js";
+
+export interface IcStation {
+  n: string; // name
+  p: string; // name ascii
+  h: string; // code
+  a: string;
+  i: string; // id
+  x: string;
+  y: string;
+}
 
 const fetchStationsFromIc = async () => {
     const url = "https://www.intercity.pl/js/station.js"; //?v=41.9

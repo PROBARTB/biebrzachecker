@@ -1,6 +1,6 @@
-import { PkpicEVAStationId } from "./pkpic/pkpic.model.js";
+import { PkpicEVAStationId } from "../pkpic/pkpic.model.js";
 import routeService from "./route.service.js";
-import { fetchErrorHandler } from "./utils/errors.js";
+import { fetchErrorHandler } from "../utils/errors.js";
 
 const getRoute = async (req: any, res: any) => {
     try {

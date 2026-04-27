@@ -1,10 +1,10 @@
-import { PkpicEPAStationId } from "./pkpic/pkpic.model.js";
-import pkpicDynamicService from "./pkpic/pkpic.dynamic.service.js";
-import { SimpleCache } from "./utils/simpleCahce.js";
-import { createHashKey } from "./utils/createHashKey.js";
-import { TrainComposition } from "./pkpic/pkpic.composition.model.js";
-import { NotFoundError } from "./utils/errors.js";
-import carriageService from "./carriage.service.js";
+import { PkpicEPAStationId } from "../pkpic/pkpic.model.js";
+import pkpicDynamicService from "../pkpic/pkpic.dynamic.service.js";
+import { SimpleCache } from "../utils/simpleCahce.js";
+import { createHashKey } from "../utils/createHashKey.js";
+import { TrainComposition } from "../pkpic/pkpic.composition.model.js";
+import { NotFoundError } from "../utils/errors.js";
+import carriageService from "../carriage/carriage.service.js";
 
 const compositionsCache = new SimpleCache(10 * 60_000);
 

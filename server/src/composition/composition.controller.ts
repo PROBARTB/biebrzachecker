@@ -1,7 +1,7 @@
 import compositionService from "./composition.service.js";
-import { PkpicEPAStationId } from "./pkpic/pkpic.model.js";
-import routeService from "./route.service.js";
-import { fetchErrorHandler } from "./utils/errors.js";
+import { PkpicEPAStationId } from "../pkpic/pkpic.model.js";
+import routeService from "../route/route.service.js";
+import { fetchErrorHandler } from "../utils/errors.js";
 
 const getComposition = async (req: any, res: any) => {
     try {

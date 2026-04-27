@@ -1,11 +1,13 @@
 import { Router } from "express";
-import icstationsController from "./icstations.controller.js";
-import routeController from "./route.controller.js";
-import compositionController from "./composition.controller.js";
-import carriageController from "./carriage.controller.js";
+import stationsController from "./stations/stations.controller.js";
+import routeController from "./route/route.controller.js";
+import compositionController from "./composition/composition.controller.js";
+import carriageController from "./carriage/carriage.controller.js";
+import connectionsController from "./connections/connections.controller.js";
 
-const icstationsRouter = Router();
-icstationsRouter.get("/", icstationsController.getStations);
+const stationsRouter = Router();
+stationsRouter.get("/", stationsController.getStations);
+stationsRouter.get("/legacy", stationsController.getLegacyStations);
 
 const routeRouter = Router();
 routeRouter.get("/", routeController.getRoute);
@@ -17,10 +19,14 @@ compositionRouter.get("/:compositionHashKey/carriage", compositionController.get
 const carriageRouter = Router();
 carriageRouter.get("/svg", carriageController.getCarriageSvg);
 
+const connectionsRouter = Router();
+connectionsRouter.post("/search", connectionsController.searchConnections)
+
 const indexRouter = Router();
-indexRouter.use("/stations", icstationsRouter);
+indexRouter.use("/stations", stationsRouter);
 indexRouter.use("/route", routeRouter);
 indexRouter.use("/composition", compositionRouter);
 indexRouter.use("/carriage", carriageRouter);
+indexRouter.use("/connections", connectionsRouter);
 
 export default indexRouter;

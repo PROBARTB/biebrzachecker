@@ -1,4 +1,4 @@
-import icstationsService from "../icstations.service.js";
+import stationsService from "../stations/stations.service.js";
 import { NotFoundError } from "../utils/errors.js";
 import { PkpicEPAStationId, PkpicEVAStationId } from "./pkpic.model.js";
 
@@ -90,12 +90,12 @@ export const parseDate = (value: string): Date | null => {
 
 const getEPAIdforEVAId = (stationEVAId: PkpicEVAStationId): PkpicEPAStationId => {
     try {
-        return icstationsService.getEPAIdforEVAId(stationEVAId)
+        return stationsService.getEPAIdforEVAId(stationEVAId)
     }catch(err) {
         if(!(err instanceof NotFoundError)) throw err;
 
         console.error(err);
-        return 0 as PkpicEPAStationId;
+        return null as unknown as PkpicEPAStationId;
     };
 }
 

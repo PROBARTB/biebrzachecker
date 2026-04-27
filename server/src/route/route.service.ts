@@ -1,8 +1,8 @@
-import { PkpicEVAStationId } from "./pkpic/pkpic.model.js";
-import pkpicDynamicService from "./pkpic/pkpic.dynamic.service.js";
-import { TrainRoute } from "./pkpic/pkpic.route.model.js";
-import { SimpleCache } from "./utils/simpleCahce.js";
-import { createHashKey } from "./utils/createHashKey.js";
+import { PkpicEVAStationId } from "../pkpic/pkpic.model.js";
+import pkpicDynamicService from "../pkpic/pkpic.dynamic.service.js";
+import { TrainRoute } from "../pkpic/pkpic.route.model.js";
+import { SimpleCache } from "../utils/simpleCahce.js";
+import { createHashKey } from "../utils/createHashKey.js";
 
 const routesCache = new SimpleCache(10 * 60_000);
 

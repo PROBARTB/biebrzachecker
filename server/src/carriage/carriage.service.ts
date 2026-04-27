@@ -1,8 +1,8 @@
-import { PkpicEPAStationId } from "./pkpic/pkpic.model.js";
-import pkpicDynamicService from "./pkpic/pkpic.dynamic.service.js";
-import { SimpleCache } from "./utils/simpleCahce.js";
-import { createHashKey } from "./utils/createHashKey.js";
-import { NotFoundError } from "./utils/errors.js";
+import { PkpicEPAStationId } from "../pkpic/pkpic.model.js";
+import pkpicDynamicService from "../pkpic/pkpic.dynamic.service.js";
+import { SimpleCache } from "../utils/simpleCahce.js";
+import { createHashKey } from "../utils/createHashKey.js";
+import { NotFoundError } from "../utils/errors.js";
 
 const carriageSvgsCache = new SimpleCache(5 * 60_000);
 
