@@ -41,27 +41,27 @@ const searchConnections = async (req: any, res: any) => {
 
         // optionally validation with api reference data in the future
         if (viaStationIds !== undefined) {
-            if(Array.isArray(viaStationIds)) return res.status(400).json({ message: "`viaStationIds` must be an array" });
+            if(!Array.isArray(viaStationIds)) return res.status(400).json({ message: "`viaStationIds` must be an array" });
         }
         p.viaStationIds = viaStationIds !== undefined ? viaStationIds : [];
         if (trainCategories !== undefined) {
-            if(Array.isArray(trainCategories)) return res.status(400).json({ message: "`trainCategories` must be an array" });
+            if(!Array.isArray(trainCategories)) return res.status(400).json({ message: "`trainCategories` must be an array" });
         }
         p.trainCategories = trainCategories !== undefined ? trainCategories : [];
         if (carriers !== undefined) {
-            if(Array.isArray(carriers)) return res.status(400).json({ message: "`carriers` must be an array" });
+            if(!Array.isArray(carriers)) return res.status(400).json({ message: "`carriers` must be an array" });
         }
         p.carriers = carriers !== undefined ? carriers : [];
         if (seatTypes !== undefined) {
-            if(Array.isArray(seatTypes)) return res.status(400).json({ message: "`seatTypes` must be an array" });
+            if(!Array.isArray(seatTypes)) return res.status(400).json({ message: "`seatTypes` must be an array" });
         }
         p.seatTypes = seatTypes !== undefined ? seatTypes : [];
         if (coachTypes !== undefined) {
-            if(Array.isArray(coachTypes)) return res.status(400).json({ message: "`coachTypes` must be an array" });
+            if(!Array.isArray(coachTypes)) return res.status(400).json({ message: "`coachTypes` must be an array" });
         }
         p.coachTypes = coachTypes !== undefined ? coachTypes : [];
         if (commercialAttributes !== undefined) {
-            if(Array.isArray(commercialAttributes)) return res.status(400).json({ message: "`commercialAttributes` must be an array" });
+            if(!Array.isArray(commercialAttributes)) return res.status(400).json({ message: "`commercialAttributes` must be an array" });
         }
         p.commercialAttributes = commercialAttributes !== undefined ? commercialAttributes : [];
 
