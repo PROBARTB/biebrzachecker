@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Box,
   Container,
@@ -9,9 +9,13 @@ import {
   createTheme,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { RouteSearchForm } from "./components/RouteSearchForm";
+import { RouteSearchForm, type RouteSearchFormHandle } from "./components/RouteSearchForm";
 import { MainTabs } from "./components/MainTabs";
 import type { RouteQueryParams } from "./hooks/route.hooks";
+
+import TLKSvg from "./assets/TLK.svg";
+import { RecentRouteParams } from "./components/RecentRouteParams";
+import type { RouteParams } from "./hooks/recentRouteParams.hooks";
 
 const theme = createTheme({
   palette: {
@@ -132,6 +136,12 @@ function App() {
       ].join(":")
     : null;
 
+  const formRef = useRef<RouteSearchFormHandle>(null);
+  const handleSelectRecent = (params: RouteParams) => {
+    console.log("hyyygyg", params);
+    formRef.current?.setFormValues(params);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -144,14 +154,32 @@ function App() {
       >
         <Container maxWidth="lg">
           <Box sx={{ display: "grid", gap: 3 }}>
-            <Box sx={{ px: { xs: 0.5, sm: 1 } }}>
-              <Typography variant="h3">Biebrza Checker</Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-                Trasa, sklad i wagony w jednym miejscu.
-              </Typography>
+            <Box
+              sx={{
+                px: { xs: 0.5, sm: 1 },
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
+              <Box
+                component="img"
+                src={TLKSvg}
+                alt="TLK"
+                sx={{ width: 64, height: "auto" }}
+              />
+
+              <Box>
+                <Typography variant="h3">Biebrza Checker</Typography>
+                <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+                  Wygodne narzędzia do api PKP Intercity
+                </Typography>
+              </Box>
             </Box>
 
-            <RouteSearchForm onSubmit={setRouteParams} />
+
+            <RouteSearchForm onSubmit={setRouteParams} ref={formRef}/>
+            <RecentRouteParams onSelect={handleSelectRecent}/>
 
             {routeParams ? (
               <MainTabs key={routeSearchKey ?? undefined} routeParams={routeParams} />
@@ -165,7 +193,7 @@ function App() {
                   backgroundColor: alpha("#FFFFFF", 0.72),
                 }}
               >
-                <Typography variant="subtitle1">Wyszukaj pociag, aby zobaczyc szczegoly.</Typography>
+                <Typography variant="subtitle1">Wybierz pociąg</Typography>
               </Paper>
             )}
           </Box>
