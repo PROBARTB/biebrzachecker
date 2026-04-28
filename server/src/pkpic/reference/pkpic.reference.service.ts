@@ -1,6 +1,6 @@
-import { NotFoundError, ExternalServiceError, ExternalServiceInvalidResponseError } from "../utils/errors.js";
-import pkpicClient from "./pkpic.client.js";
-import { formatPkpicLastUpdateDate } from "./pkpic.model.js";
+import { NotFoundError, ExternalServiceError, ExternalServiceInvalidResponseError } from "../../utils/errors.js";
+import pkpicClient from "../pkpic.client.js";
+import { formatPkpicLastUpdateDate } from "../pkpic.model.js";
 import { type GetStationsResponse, type Station, mapGetStationsResponse } from "./pkpic.reference.model.js";
 
 const getStations= async (): Promise<Station[]> => {

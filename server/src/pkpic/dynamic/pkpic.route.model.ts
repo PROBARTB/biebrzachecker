@@ -1,6 +1,6 @@
-import stationsService from "../stations/stations.service.js";
-import { NotFoundError } from "../utils/errors.js";
-import { PkpicEPAStationId, PkpicEVAStationId } from "./pkpic.model.js";
+import stationsService from "../../stations/stations.service.js";
+import { NotFoundError } from "../../utils/errors.js";
+import { PkpicEPAStationId, PkpicEVAStationId } from "../pkpic.model.js";
 
 export interface GetTrainRoutePayload {
     departureDate: Date,

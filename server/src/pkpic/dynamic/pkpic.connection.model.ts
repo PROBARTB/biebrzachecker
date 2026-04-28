@@ -1,4 +1,4 @@
-import { PkpicCodeStationId, PkpicEVAStationId } from "./pkpic.model.js";
+import { PkpicCodeStationId, PkpicEVAStationId } from "../pkpic.model.js";
 
 export interface SearchConnectionsPayload {
   url: string | null;

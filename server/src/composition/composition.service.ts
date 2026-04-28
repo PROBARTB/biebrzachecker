@@ -1,8 +1,8 @@
 import { PkpicEPAStationId } from "../pkpic/pkpic.model.js";
-import pkpicDynamicService from "../pkpic/pkpic.dynamic.service.js";
+import pkpicDynamicService from "../pkpic/dynamic/pkpic.dynamic.service.js";
 import { SimpleCache } from "../utils/simpleCahce.js";
 import { createHashKey } from "../utils/createHashKey.js";
-import { TrainComposition } from "../pkpic/pkpic.composition.model.js";
+import { TrainComposition } from "../pkpic/dynamic/pkpic.composition.model.js";
 import { NotFoundError } from "../utils/errors.js";
 import carriageService from "../carriage/carriage.service.js";
 

@@ -1,6 +1,6 @@
 import carriageService from "../carriage/carriage.service.js";
 import compositionService from "../composition/composition.service.js";
-import { SearchConnectionsPayload } from "../pkpic/pkpic.connection.model.js";
+import { SearchConnectionsPayload } from "../pkpic/dynamic/pkpic.connection.model.js";
 import { PkpicCodeStationId, PkpicEVAStationId } from "../pkpic/pkpic.model.js";
 import routeService from "../route/route.service.js";
 import stationsService from "../stations/stations.service.js";

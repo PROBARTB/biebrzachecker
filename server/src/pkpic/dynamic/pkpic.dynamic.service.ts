@@ -1,10 +1,10 @@
-import pkpicClient from "./pkpic.client.js";
-import { formatPkpicGrmDate } from "./pkpic.model.js";
+import pkpicClient from "../pkpic.client.js";
+import { formatPkpicGrmDate } from "../pkpic.model.js";
 import { type FetchCarriageSvgPayload } from "./pkpic.carriage.model.js";
 import { type GetTrainCompositionResponse, type GetTrainCompositionPayload, type TrainComposition, mapTrainCompositionResponse } from "./pkpic.composition.model.js";
 import { type Connection, type SearchConnectionsPayload, type SearchConnectionsResponse, mapSearchConnectionResponse } from "./pkpic.connection.model.js";
 import { type GetTrainRoutePayload, type TrainRoute, type TrainRouteResponse, mapTrainRouteResponse } from "./pkpic.route.model.js";
-import { NotFoundError, ExternalServiceError, ExternalServiceInvalidResponseError } from "../utils/errors.js";
+import { NotFoundError, ExternalServiceError, ExternalServiceInvalidResponseError } from "../../utils/errors.js";
 
 const searchConnections = async (payload: SearchConnectionsPayload): Promise<Connection[]> => {
     const res = await pkpicClient.publicPost<SearchConnectionsResponse>("/server/public/endpoint/Pociagi", {

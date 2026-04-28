@@ -1,9 +1,9 @@
 import { PkpicCodeStationId, PkpicEPAStationId, PkpicEVAStationId } from "../pkpic/pkpic.model.js";
-import pkpicDynamicService from "../pkpic/pkpic.dynamic.service.js";
+import pkpicDynamicService from "../pkpic/dynamic/pkpic.dynamic.service.js";
 import { SimpleCache } from "../utils/simpleCahce.js";
 import { createHashKey } from "../utils/createHashKey.js";
 import { NotFoundError } from "../utils/errors.js";
-import { Connection } from "../pkpic/pkpic.connection.model.js";
+import { Connection } from "../pkpic/dynamic/pkpic.connection.model.js";
 
 const connectionsCache = new SimpleCache(10 * 60_000);
 

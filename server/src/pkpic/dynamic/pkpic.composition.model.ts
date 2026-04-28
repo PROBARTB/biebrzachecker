@@ -1,4 +1,4 @@
-import { PkpicEPAStationId } from "./pkpic.model.js";
+import { PkpicEPAStationId } from "../pkpic.model.js";
 
 //https://api-gateway.intercity.pl/grm/sklad/wbnet/IC/1516/202604222037/5100136/202604221701/5100023
 export interface GetTrainCompositionPayload {
