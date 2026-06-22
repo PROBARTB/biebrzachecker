@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Tabs, Tab, Box, Paper } from "@mui/material";
-import { alpha } from "@mui/material/styles";
+import { Tabs, Tab, Box } from "@mui/material";
 import { type RouteQueryParams } from "../hooks/route.hooks";
 import { RouteTab } from "./RouteTab";
 import { CompositionTab } from "./CompositionTab";
