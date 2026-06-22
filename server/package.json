@@ -17,6 +17,8 @@
   },
   "scripts": {
     "dev": "node --loader ts-node/esm src/app.ts",
-    "n": "npx nodemon"
+    "n": "npx nodemon",
+    "build": "tsc",
+    "start": "node dist/app.js"
   }
 }
